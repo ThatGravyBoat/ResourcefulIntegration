@@ -13,7 +13,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "ResourcefulIntegration"
+rootProject.buildFileName = "root.gradle.kts"
 
 listOf(
     "1.8.9-forge",
@@ -32,13 +32,11 @@ listOf(
     "1.19.2-fabric",
     "1.19.4-forge",
     "1.19.4-fabric"
-).forEach {
-    include(":$it")
-    project(":$it").apply {
-        projectDir = file("versions/$it")
+).forEach {version ->
+    include(":$version")
+    project(":$version").apply {
+        projectDir = file("versions/$version")
         buildFileName = "../../build.gradle.kts"
     }
 }
-
-rootProject.buildFileName = "root.gradle.kts"
 
