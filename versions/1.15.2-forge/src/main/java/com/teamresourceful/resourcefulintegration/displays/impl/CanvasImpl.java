@@ -1,13 +1,13 @@
 package com.teamresourceful.resourcefulintegration.displays.impl;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.teamresourceful.resourcefulintegration.displays.GuiCanvas;
 import com.teamresourceful.resourcefulintegration.displays.GuiScissor;
 import com.teamresourceful.resourcefulintegration.displays.GuiStack;
 import com.teamresourceful.resourcefulintegration.displays.GuiText;
 import com.teamresourceful.resourcefulintegration.utils.PreprocessedReplaced;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @ApiStatus.Internal
 @PreprocessedReplaced
-public class CanvasImpl extends Gui implements GuiCanvas {
+public class CanvasImpl implements GuiCanvas {
 
     private static final Map<String, ResourceLocation> TEXTURE_MAP = new HashMap<>();
 
@@ -32,21 +32,21 @@ public class CanvasImpl extends Gui implements GuiCanvas {
 
     @Override
     public void fill(int x, int y, int width, int height, int color) {
-        drawRect(x, y, width, height, color);
+        AbstractGui.fill(x, y, x + width, y + height, color);
     }
 
     @Override
-    public void fillGradient(int x, int y, int width, int height, int colorStart, int colorEnd) {
-        drawGradientRect(x, y, width, height, colorStart, colorEnd);
+    public void fillWithGradient(int x, int y, int width, int height, int colorStart, int colorEnd) {
+        InternalGui.fillWithGradient(x, y, width, height, colorStart, colorEnd);
     }
 
     @Override
     public void drawTexture(String texture, int x, int y, int width, int height, int u, int v, int textureWidth, int textureHeight) {
         ResourceLocation id = getTexture(texture);
         if (id == null) return;
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(id);
-        drawModalRectWithCustomSizedTexture(x, y, u, v, width, height, textureWidth, textureHeight);
+        AbstractGui.blit(x, y, u, v, width, height, textureWidth, textureHeight);
     }
 
     @Override
@@ -76,6 +76,19 @@ public class CanvasImpl extends Gui implements GuiCanvas {
         } catch (Exception e) {
             TEXTURE_MAP.put(texture, null);
             return null;
+        }
+    }
+
+    private static class InternalGui extends AbstractGui {
+
+        private static final InternalGui INSTANCE = new InternalGui();
+
+        public static void fillWithGradient(int x, int y, int width, int height, int colorStart, int colorEnd) {
+            INSTANCE.fillGradient(x, y, x + width, y + height, colorStart, colorEnd);
+        }
+
+        public void fillGradient(int x, int y, int width, int height, int colorStart, int colorEnd) {
+            super.fillGradient(x, y, width, height, colorStart, colorEnd);
         }
     }
 }

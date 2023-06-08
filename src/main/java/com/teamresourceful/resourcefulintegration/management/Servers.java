@@ -1,4 +1,4 @@
-package com.teamresourceful.resourcefulintegration.servers;
+package com.teamresourceful.resourcefulintegration.management;
 
 import com.teamresourceful.resourcefulintegration.utils.PreprocessedReplaced;
 import net.minecraft.client.Minecraft;

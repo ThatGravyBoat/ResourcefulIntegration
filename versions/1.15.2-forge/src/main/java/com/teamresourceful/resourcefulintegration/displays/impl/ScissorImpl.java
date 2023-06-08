@@ -2,8 +2,8 @@ package com.teamresourceful.resourcefulintegration.displays.impl;
 
 import com.teamresourceful.resourcefulintegration.displays.GuiScissor;
 import com.teamresourceful.resourcefulintegration.utils.PreprocessedReplaced;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.GL11;
 
@@ -19,12 +19,11 @@ public class ScissorImpl implements GuiScissor {
 
     @Override
     public void enable(int x, int y, int width, int height) {
-        int displayHeight = this.mc.displayHeight;
-        ScaledResolution resolution = new ScaledResolution(this.mc);
-        int scale = resolution.getScaleFactor();
+        MainWindow window = this.mc.getMainWindow();
+        int scale = (int) window.getGuiScaleFactor();
         GL11.glScissor(
             x * scale,
-            displayHeight - (y + height) * scale,
+            window.getHeight() - (y + height) * scale,
             width * scale,
             height * scale
         );
